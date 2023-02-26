@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 # pip install plotly-express
 import streamlit as st
+import altair as alt
 
 # pip install streamlit
 
@@ -55,7 +56,6 @@ with right_column:
 
 st.markdown("""---""")
 
-
 # Price BY Team [BAR CHART]
 price_by_team = (
     df_selection.groupby(by=["Team"]).sum()[["Price Cr"]].sort_values(by="Price Cr")
@@ -74,10 +74,35 @@ fig_team_price.update_layout(
     xaxis=(dict(showgrid=False))
 )
 
+# Price BY Team [PIE CHART]
+fig_team_price_pie = px.pie(
+    price_by_team,
+    values="Price Cr",
+    names=price_by_team.index,
+    title="<b>Price by Teams</b>",
+    color_discrete_map={team.lower().strip(): color for team, color in {
+        "Royal Challengers Bangalore": "#FF0000",
+        "Chennai Super Kings": "yellow",
+        "Mumbai Indians": "blue",
+        "Gujrat Titans": "#004C99",
+        "Rajasthan Royals": "pink",
+        "Lucknow Super Giants": "#33FFFF",
+        "Delhi capitals": "#6666FF",
+        "Sunrisers hyderabad": "orange",
+        "Punjab Kings": "#FF66B2",
+        "Unsold": "#331900"
+    }.items()},
+    template="plotly_white",
+)
+
+
+fig_team_price_pie.update_layout(
+    plot_bgcolor="rgba(0,0,0,0)"
+)
 
 left_column, right_column = st.columns(2)
 left_column.plotly_chart(fig_team_price, use_container_width=True)
-right_column.plotly_chart(fig_team_price, use_container_width=True)
+right_column.plotly_chart(fig_team_price_pie, use_container_width=True)
 
 # ---- HIDE STREAMLIT STYLE ----
 hide_st_style = """
